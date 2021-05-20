@@ -21,7 +21,7 @@ const startingPrompt = [
 
 connection.connect(err => {
   if(err) throw err;
-  console.log("Welcome to the EMS!");
+  console.log("Welcome to the CMS!");
   initApp();
 });
 
