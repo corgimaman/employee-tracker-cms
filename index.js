@@ -39,7 +39,15 @@ function initApp() {
         case 'View departments, roles, or employees':
           viewTables();
           break;
-
+        /*
+        case 'View total utilized budget of a department':
+          departmentBudget();
+          break;
+                  
+        case 'View employees by manager':
+          viewEmployeesByManager();
+          break;
+        */
         case 'Update employee roles':
           updateRoles();
           break;
@@ -48,16 +56,8 @@ function initApp() {
           updateManagers();
           break;
 
-        case 'View employees by manager':
-          viewEmployeesByManager();
-          break;
-        
         case 'Delete departments, roles, or employees':
           deleteRows();
-          break;
-
-        case 'View total utilized budget of a department':
-          departmentBudget();
           break;
         */
        case 'Exit App':
@@ -90,7 +90,6 @@ const addToTable = () => {
 // Read
 
 const viewTables = () => {
-  console.log("view table!");
   inquirer.prompt({
     name: 'viewTable',
     type: 'rawlist',
@@ -129,11 +128,23 @@ const viewTables = () => {
   });
 };
 
+const departmentBudget = () => {
+  console.log("department budget!!!");
+}
+
+const viewEmployeesByManager = () => {
+  console.log("view by manager!")
+};
+
 // Edit
 
 const updateRoles = () => {
   console.log("update roles!");
 };
+
+const updateManagers = () => {
+  console.log("update managers!!!");
+}
 
 // Delete
 
