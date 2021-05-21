@@ -18,14 +18,41 @@ const startingPrompt = [
         type: "rawlist"
     }
 ];
+// Bonus answers to add to choices: "Update employee managers", "View employees by manager", "Delete departments, roles, or employees", "View total utilized budget of a department"
 
 connection.connect(err => {
   if(err) throw err;
   console.log("Welcome to the CMS!");
-  initApp();
+  console.log('line 26' + getEmployees());
+  //initApp();
 });
 
-// Bonus answers to add to choices: "Update employee managers", "View employees by manager", "Delete departments, roles, or employees", "View total utilized budget of a department"
+// functions to get data:
+
+// function getEmployees() {
+//   let employees = [];
+//   connection.query('SELECT * FROM employee', async (err, res) => {
+//     if (err) throw err;
+//     //console.log(res);
+//     await res.forEach(person => {
+//       let fullName = `${person.first_name} ${person.last_name}`
+//       employees.push({ name: fullName, id: person.role_id});
+//     })
+//     console.log('line 41'+employees);
+//     return employees;
+//   });
+//   console.log('line 43!!' + employees);
+// };
+
+const allEmployees = await 
+
+function getRoles() {
+
+};
+
+function getDepartments() {
+
+};
 
 function initApp() {
   inquirer
@@ -140,6 +167,14 @@ const viewEmployeesByManager = () => {
 
 const updateRoles = () => {
   console.log("update roles!");
+  inquirer.prompt({
+    name: 'chosenOne',
+    type: 'rawlist',
+    message: 'Choose which employee you want to update:',
+    choices: getEmployees()
+  }).then(answer => {
+    console.log(answer)
+  })
 };
 
 const updateManagers = () => {
