@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
+const { Employee } = require('./models/employee')
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -140,7 +141,6 @@ const viewTables = () => {
     }
 
     let query = `SELECT ${columns} FROM ${table}`
-    //console.log(query);
     connection.query(query, function(err, res) {
       if (err) throw err;
       console.table(res);
@@ -186,6 +186,51 @@ const deleteRows = () => {
 
 
 // functions to get data:
+
+function getEmployees()
+
+// function getEmployees(){
+//   const query = `SELECT * FROM employee`;
+//   let employees = []
+//   connection.query(query, async (err, res) => {
+//     if (err) throw err;
+//     await res.forEach(r => {
+//       const fullName = `${r.first_name} ${r.last_name}`
+//       employees.push({ name: fullName, value: r.id })
+//   });
+//   });
+//   return employees
+// };
+
+// function getEmployees(){
+//   let employee = [];
+//   connection.connect(function(err){
+//     if (err) throw err;
+//     var sql = `SELECT * FROM employee`;
+//     connection.query(sql, function (err, result) {
+//       if (err) throw err;
+//       console.table(result)
+//       console.log(result)
+//       employee.push(`${result.first_name} ${result.last_name}`)
+//       return employee
+//     })
+//   })
+// }
+
+// function getEmployees() {
+//   let employees = [];
+//   connection.promise().query('SELECT * FROM employee').then(row => {
+//     for (let i = 0; i < row.length; i++) {
+//       const firstname = row.first_name[i];
+//       const lastname = row.last_name[i];
+//       const id = row.id[i];
+//       employees.pop(firstname, lastname, id)
+//     }
+//     return employees
+//   }).catch(err => {
+//     console.log(err);
+//   })
+// }
 
 //async function getEmployees() {
   // connection.query('SELECT * FROM employee', (err, res) => {
