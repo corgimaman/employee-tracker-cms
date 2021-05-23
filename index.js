@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const cTable = require('console.table');
 
 const connection = mysql.createConnection({
@@ -9,6 +9,8 @@ const connection = mysql.createConnection({
     password: 'password',
     database: 'company_db'
 });
+
+const tableChoices = ['Departments', 'Roles', 'Employees']
 
 const startingPrompt = [
     {
@@ -23,36 +25,9 @@ const startingPrompt = [
 connection.connect(err => {
   if(err) throw err;
   console.log("Welcome to the CMS!");
-  console.log('line 26' + getEmployees());
-  //initApp();
+  initApp();
 });
 
-// functions to get data:
-
-// function getEmployees() {
-//   let employees = [];
-//   connection.query('SELECT * FROM employee', async (err, res) => {
-//     if (err) throw err;
-//     //console.log(res);
-//     await res.forEach(person => {
-//       let fullName = `${person.first_name} ${person.last_name}`
-//       employees.push({ name: fullName, id: person.role_id});
-//     })
-//     console.log('line 41'+employees);
-//     return employees;
-//   });
-//   console.log('line 43!!' + employees);
-// };
-
-const allEmployees = await 
-
-function getRoles() {
-
-};
-
-function getDepartments() {
-
-};
 
 function initApp() {
   inquirer
@@ -112,6 +87,27 @@ function initApp() {
 
 const addToTable = () => {
   console.log("add to table!");
+  inquirer.prompt({
+    name: 'addTo',
+    type: 'rawlist',
+    message: 'Which do you want to update?',
+    choices: tableChoices
+  }).then(answer => {
+    switch(answer.addTo) {
+      case 'Departments':
+        addDepartments();
+        break;
+      case 'Roles':
+        addRoles();
+        break;
+      case 'Employees':
+        addEmployees();
+        break;
+      default:
+        console.log(`Invalid action: ${answer.addTo}`);
+        break;
+    }
+  });
 };
 
 // Read
@@ -121,7 +117,7 @@ const viewTables = () => {
     name: 'viewTable',
     type: 'rawlist',
     message: 'Choose which you want to see:',
-    choices: ['Departments', 'Roles', 'Employees']
+    choices: tableChoices
   }).then(answer => {
     let table;
     let columns;
@@ -185,4 +181,120 @@ const updateManagers = () => {
 
 const deleteRows = () => {
   console.log("delete rows!");
+}
+
+
+
+// functions to get data:
+
+//async function getEmployees() {
+  // connection.query('SELECT * FROM employee', (err, res) => {
+  //   if (err) throw err;
+  //   //res.forEach(({ first_name, last_name }) => console.log(first_name, last_name))
+  //   res.forEach(data => {
+  //     const fullName = `${data.first_name} + ${data.last_name}`
+  //     employees.push({ name: fullName, value: data.id})
+  //   });
+  //   return employees
+  // });
+// };
+
+function getRoles() {
+
+};
+
+function getDepartments() {
+
+};
+
+// Create
+
+function addDepartments(){
+  inquirer.prompt({
+    name: 'deptName',
+    type: 'input',
+    message: 'What is the name of the department?'
+  }).then(answer => {
+    connection.connect(function(err) {
+      if (err) throw err;
+      var sql = `INSERT INTO department (name) VALUES ('${answer.deptName}')`;
+      connection.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log("1 record inserted");
+        setTimeout(() => initApp(), 2000);
+      });
+    });
+  });
+}
+
+function addRoles(){
+  inquirer.prompt({
+    name: 'title',
+    type: 'input',
+    message: 'What is the title of the Role?'
+  },
+  {
+    name: 'salary',
+    type: 'number',
+    message: 'What is the salary?'
+  },
+  {
+    name: 'department',
+    type: 'rawlist',
+    message: 'What department does the role belong to?',
+    choices: getDepartments()
+  }).then(answer => {
+    // need to use foreign key to get department id
+    connection.connect(function(err) {
+      if (err) throw err;
+      var sql = `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}, ${answer.salary}, ${answer.department}')`;
+      connection.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log("1 record inserted");
+        setTimeout(() => initApp(), 2000);
+      });
+    });
+  });
+}
+
+function addEmployees(){
+  inquirer.prompt({
+    name: 'first',
+    type: 'input',
+    message: 'What is their first name?'
+  },
+  {   
+    name: 'last',
+    type: 'input',
+    message: 'What is their last name?'
+  },
+  {
+    name: 'role',
+    type: 'rawlist',
+    message: 'What is their role?',
+    choices: getRoles()
+  },
+  {
+    name: 'managerCheck',
+    type: 'confirm',
+    message: 'Do they have a manager?'
+  },
+  {
+    name: 'manager',
+    type: 'rawlist',
+    message: 'Who is their manager?',
+    choices: getEmployees()
+  }).then(answer => {
+    // need to use foreign key to get department id and manager id?
+    // also need an if statement to make different sql if no manager
+    connection.connect(function(err) {
+      if (err) throw err;
+      var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}, ${answer.last_name}, ${answer.role_id}, ${answer.manager_id}')`;
+      connection.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log("1 record inserted");
+        setTimeout(() => initApp(), 2000);
+      });
+    });
+  });
 }
