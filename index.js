@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
-const { Employee } = require('./models/employee')
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -111,149 +110,6 @@ const addToTable = () => {
   });
 };
 
-// Read
-
-const viewTables = () => {
-  inquirer.prompt({
-    name: 'viewTable',
-    type: 'rawlist',
-    message: 'Choose which you want to see:',
-    choices: tableChoices
-  }).then(answer => {
-    let table;
-    let columns;
-    switch(answer.viewTable) {
-      case 'Departments':
-        table = 'department';
-        columns = 'name';
-        break;
-      case 'Roles':
-        table = 'role';
-        columns = 'title';
-        break;
-      case 'Employees':
-        table = 'employee';
-        columns = 'first_name, last_name';
-        break;
-      default:
-        console.log(`Invalid action: ${answer.viewTable}`);
-        break;  
-    }
-
-    let query = `SELECT ${columns} FROM ${table}`
-    connection.query(query, function(err, res) {
-      if (err) throw err;
-      console.table(res);
-      // Add a timeout to let user see result before starting app again
-      setTimeout(() => initApp(), 3000);
-    });
-
-  });
-};
-
-const departmentBudget = () => {
-  console.log("department budget!!!");
-}
-
-const viewEmployeesByManager = () => {
-  console.log("view by manager!")
-};
-
-// Edit
-
-const updateRoles = () => {
-  console.log("update roles!");
-  inquirer.prompt({
-    name: 'chosenOne',
-    type: 'rawlist',
-    message: 'Choose which employee you want to update:',
-    choices: getEmployees()
-  }).then(answer => {
-    console.log(answer)
-  })
-};
-
-const updateManagers = () => {
-  console.log("update managers!!!");
-}
-
-// Delete
-
-const deleteRows = () => {
-  console.log("delete rows!");
-}
-
-
-
-// functions to get data:
-
-function getEmployees()
-
-// function getEmployees(){
-//   const query = `SELECT * FROM employee`;
-//   let employees = []
-//   connection.query(query, async (err, res) => {
-//     if (err) throw err;
-//     await res.forEach(r => {
-//       const fullName = `${r.first_name} ${r.last_name}`
-//       employees.push({ name: fullName, value: r.id })
-//   });
-//   });
-//   return employees
-// };
-
-// function getEmployees(){
-//   let employee = [];
-//   connection.connect(function(err){
-//     if (err) throw err;
-//     var sql = `SELECT * FROM employee`;
-//     connection.query(sql, function (err, result) {
-//       if (err) throw err;
-//       console.table(result)
-//       console.log(result)
-//       employee.push(`${result.first_name} ${result.last_name}`)
-//       return employee
-//     })
-//   })
-// }
-
-// function getEmployees() {
-//   let employees = [];
-//   connection.promise().query('SELECT * FROM employee').then(row => {
-//     for (let i = 0; i < row.length; i++) {
-//       const firstname = row.first_name[i];
-//       const lastname = row.last_name[i];
-//       const id = row.id[i];
-//       employees.pop(firstname, lastname, id)
-//     }
-//     return employees
-//   }).catch(err => {
-//     console.log(err);
-//   })
-// }
-
-//async function getEmployees() {
-  // connection.query('SELECT * FROM employee', (err, res) => {
-  //   if (err) throw err;
-  //   //res.forEach(({ first_name, last_name }) => console.log(first_name, last_name))
-  //   res.forEach(data => {
-  //     const fullName = `${data.first_name} + ${data.last_name}`
-  //     employees.push({ name: fullName, value: data.id})
-  //   });
-  //   return employees
-  // });
-// };
-
-function getRoles() {
-
-};
-
-function getDepartments() {
-
-};
-
-// Create
-
 function addDepartments(){
   inquirer.prompt({
     name: 'deptName',
@@ -343,3 +199,138 @@ function addEmployees(){
     });
   });
 }
+
+// Read
+
+const viewTables = () => {
+  inquirer.prompt({
+    name: 'viewTable',
+    type: 'rawlist',
+    message: 'Choose which you want to see:',
+    choices: tableChoices
+  }).then(answer => {
+    let table;
+    let columns;
+    switch(answer.viewTable) {
+      case 'Departments':
+        table = 'department';
+        columns = 'name';
+        break;
+      case 'Roles':
+        table = 'role';
+        columns = 'title';
+        break;
+      case 'Employees':
+        table = 'employee';
+        columns = 'first_name, last_name';
+        break;
+      default:
+        console.log(`Invalid action: ${answer.viewTable}`);
+        break;  
+    }
+
+    let query = `SELECT ${columns} FROM ${table}`
+    connection.query(query, function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      // Add a timeout to let user see result before starting app again
+      setTimeout(() => initApp(), 3000);
+    });
+
+  });
+};
+
+const departmentBudget = () => {
+  console.log("department budget!!!");
+}
+
+const viewEmployeesByManager = () => {
+  console.log("view by manager!")
+};
+
+// Edit
+
+const updateRoles = async () => {
+  console.log("update roles!");
+  getEmployees(function(employees) {
+  inquirer.prompt({
+    name: 'chosenOne',
+    type: 'rawlist',
+    message: 'Choose which employee you want to update:',
+    choices: employees
+  }).then(answer => {
+    let employeeID = answer.chosenOne;
+    getRoles(function(roles) {
+      inquirer.prompt({
+        name: 'chosenRole',
+        type: 'rawlist',
+        message: 'Which role do you want to assign to them?',
+        choices: roles
+      }).then(answer => {
+        let roleID = answer.chosenRole;
+        connection.query(`UPDATE employee SET ? WHERE ?`,
+        [
+          {
+            role_id: roleID,
+          },
+          {
+            id: employeeID,
+          },
+        ],
+        (error) => {
+          if (error) throw err;
+          console.log('Updated successfully!');
+          setTimeout(() => initApp(), 3000);
+        })
+      })
+    })
+  })
+})
+};
+
+
+const updateManagers = () => {
+  console.log("update managers!!!");
+}
+
+// Delete
+
+const deleteRows = () => {
+  console.log("delete rows!");
+}
+
+
+
+// functions to get data:
+
+ function  getEmployees(cb){
+  const query = `SELECT * FROM employee`;
+  let employees = []
+    connection.query(query,(err, res) => {
+    if (err) throw err;
+     res.forEach(r => {
+      const fullName = `${r.first_name} ${r.last_name}`
+      employees.push({ name: fullName, value: r.id })
+     });
+      cb(employees)
+  });
+};
+
+function getRoles(cb) {
+  const query = `SELECT * FROM role`
+  let roles = [];
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    res.forEach(r => {
+      roles.push({ name: r.title, value: r.id })
+    });
+    cb(roles);
+  }) 
+};
+
+function getDepartments() {
+
+};
+
+// Create
+
