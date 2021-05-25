@@ -83,14 +83,13 @@ function initApp() {
     });
 }
 
-// Create
+// Create ---------------------------------
 
 const addToTable = () => {
-  console.log("add to table!");
   inquirer.prompt({
     name: 'addTo',
     type: 'rawlist',
-    message: 'Which do you want to update?',
+    message: 'Which do you want to add to?',
     choices: tableChoices
   }).then(answer => {
     switch(answer.addTo) {
@@ -132,12 +131,12 @@ function addRoles(){
   inquirer.prompt({
     name: 'title',
     type: 'input',
-    message: 'What is the title of the Role?'
+    message: 'What is the title of the Role?',
   },
   {
     name: 'salary',
     type: 'number',
-    message: 'What is the salary?'
+    message: 'What is the salary?',
   },
   {
     name: 'department',
@@ -200,7 +199,7 @@ function addEmployees(){
   });
 }
 
-// Read
+// Read ---------------------------------
 
 const viewTables = () => {
   inquirer.prompt({
@@ -248,7 +247,7 @@ const viewEmployeesByManager = () => {
   console.log("view by manager!")
 };
 
-// Edit
+// Edit ---------------------------------
 
 const updateRoles = async () => {
   console.log("update roles!");
@@ -293,26 +292,51 @@ const updateManagers = () => {
   console.log("update managers!!!");
 }
 
-// Delete
+// Delete ---------------------------------
 
 const deleteRows = () => {
   console.log("delete rows!");
+  inquirer.prompt({
+    name: 'deleteWhat',
+    type: 'rawlist',
+    message: 'Which do you want to delete?',
+    choices: tableChoices
+  }).then(answer => {
+    switch(answer.deleteWhat) {
+      case 'Departments':
+        deleteDepartments();
+        break;
+      case 'Roles':
+        deleteRoles();
+        break;
+      case 'Employees':
+        deleteEmployees();
+        break;
+      default:
+        console.log(`Invalid action: ${answer.deleteWhat}`);
+        break;
+    };
+  });
+};
+
+function deleteDepartments() {
+
 }
 
 
 
-// functions to get data:
+// functions to get data: ---------------------------------
 
- function  getEmployees(cb){
+ function getEmployees(cb){
   const query = `SELECT * FROM employee`;
-  let employees = []
+  let employees = [];
     connection.query(query,(err, res) => {
     if (err) throw err;
      res.forEach(r => {
-      const fullName = `${r.first_name} ${r.last_name}`
-      employees.push({ name: fullName, value: r.id })
+      const fullName = `${r.first_name} ${r.last_name}`;
+      employees.push({ name: fullName, value: r.id });
      });
-      cb(employees)
+      cb(employees);
   });
 };
 
@@ -322,15 +346,19 @@ function getRoles(cb) {
   connection.query(query, (err, res) => {
     if (err) throw err;
     res.forEach(r => {
-      roles.push({ name: r.title, value: r.id })
+      roles.push({ name: r.title, value: r.id });
     });
     cb(roles);
-  }) 
+  });
 };
 
-function getDepartments() {
-
+function getDepartments(cb) {
+  const query = `SELECT * FROM department`;
+  let departments = [];
+  connection.query(query, (err, res) => {
+    res.forEach(r => {
+      departments.push({ name: r.name, value: r.id });
+    });
+    cb(departments);
+  });
 };
-
-// Create
-
