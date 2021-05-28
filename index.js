@@ -128,22 +128,24 @@ function addDepartments(){
 }
 
 function addRoles(){
-  inquirer.prompt({
-    name: 'title',
-    type: 'input',
-    message: 'What is the title of the Role?',
-  },
-  {
-    name: 'salary',
-    type: 'number',
-    message: 'What is the salary?',
-  },
-  {
-    name: 'department',
-    type: 'rawlist',
-    message: 'What department does the role belong to?',
-    choices: getDepartments()
-  }).then(answer => {
+  inquirer.prompt([
+    {
+      name: 'title',
+      type: 'input',
+      message: 'What is the title of the Role?',
+    },
+    {
+      name: 'salary',
+      type: 'number',
+      message: 'What is the salary?',
+    },
+    {
+      name: 'department',
+      type: 'rawlist',
+      message: 'What department does the role belong to?',
+      choices: getDepartments()
+    },
+  ]).then(answer => {
     // need to use foreign key to get department id
     connection.connect(function(err) {
       if (err) throw err;
