@@ -214,7 +214,7 @@ function addEmployees(){
             if (!answer.managerCheck) {
               var sql = `INSERT INTO employee (first_name, last_name, role_id) VALUES ('${answer.first}', '${answer.last}', ${answer.role})`;
             } else {
-            var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first}', '${answer.last}', ${answer.role}, ${answer.manager}')`;
+            var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first}', '${answer.last}', ${answer.role}, ${answer.manager})`;
             }
             connection.query(sql, function (err, result) {
               if (err) throw err;
