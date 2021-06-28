@@ -200,6 +200,7 @@ function addEmployees(){
         type: 'rawlist',
         message: 'Who is their manager?',
         choices: emps,
+       // default: null,
         when(answer) {
           return answer.managerCheck;
         }
@@ -208,19 +209,18 @@ function addEmployees(){
         //console.log('asnwer!!', answer)
         // need to use foreign key to get department id and manager id?
         // also need an if statement to make different sql if no manager
-        // if (!answer.managerCheck) {
-        //   var sql = `INSERT INTO employee (first_name, last_name, role_id) VALUES ('${answer.first_name}, ${answer.last_name}, ${answer.role_id})`;
-        // } else {
-          //}
           connection.connect(function(err) {
             if (err) throw err;
-            var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}, ${answer.last_name}, ${answer.role_id}, ${answer.manager}')`;
-          console.log(sql)
-          connection.query(sql, function (err, result) {
-            if (err) throw err;
-            console.log("1 record inserted");
-            setTimeout(() => initApp(), 2000);
-            });
+            if (!answer.managerCheck) {
+              var sql = `INSERT INTO employee (first_name, last_name, role_id) VALUES ('${answer.first}', '${answer.last}', ${answer.role})`;
+            } else {
+            var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first}', '${answer.last}', ${answer.role}, ${answer.manager}')`;
+            }
+            connection.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log("1 record inserted");
+              setTimeout(() => initApp(), 2000);
+              });
           });
         });
       })
