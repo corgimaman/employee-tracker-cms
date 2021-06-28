@@ -129,7 +129,7 @@ function addDepartments(){
 
 function addRoles(){
   getDepartments(function(depts) {
-    console.log('depts!!!!', depts)
+    //console.log('depts!!!!', depts)
     inquirer.prompt([
       {
         name: 'title',
@@ -139,7 +139,7 @@ function addRoles(){
       {
         name: 'salary',
         type: 'input',
-        message: 'What is the salary? (Be sure to enter to 2 decimal places)',
+        message: 'What is the salary?',
       },
       {
         name: 'department',
@@ -148,13 +148,13 @@ function addRoles(){
         choices: depts
       },
     ]).then(answer => {
-      console.log(answer)
-      let salary = parseFloat(answer.salary)
-      console.log(salary)
+      //console.log(answer)
+      //let salary = parseFloat(answer.salary)
+      //console.log(salary)
       // need to use foreign key to get department id
       connection.connect(function(err) {
         if (err) throw err;
-        var sql = `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', ${salary}, '${answer.department}')`;
+        var sql = `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', ${answer.salary}.00, '${answer.department}')`;
         connection.query(sql, function (err, result) {
           if (err) throw err;
           console.log("1 record inserted");
@@ -162,16 +162,16 @@ function addRoles(){
         });
       });
     });
-  })
+  });
 }
 
 function addEmployees(){
 
     getRoles(function(roles) {
-      console.log('Roles!!!!', roles)
+      //console.log('Roles!!!!', roles)
        getEmployees(function(emps){
 
-        console.log('emps!!!!', emps)
+        //console.log('emps!!!!', emps)
     
       inquirer.prompt([{
         name: 'first',
@@ -199,24 +199,32 @@ function addEmployees(){
         name: 'manager',
         type: 'rawlist',
         message: 'Who is their manager?',
-        choices: emps
+        choices: emps,
+        when(answer) {
+          return answer.managerCheck;
+        }
     
       }]).then(answer => {
-        console.log('asnwer!!', answer)
+        //console.log('asnwer!!', answer)
         // need to use foreign key to get department id and manager id?
         // also need an if statement to make different sql if no manager
-        connection.connect(function(err) {
-          if (err) throw err;
-          var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}, ${answer.last_name}, ${answer.role_id}, ${answer.manager_id}')`;
-          // connection.query(sql, function (err, result) {
-          //   if (err) throw err;
-          //   console.log("1 record inserted");
-          //   setTimeout(() => initApp(), 2000);
-          // });
+        // if (!answer.managerCheck) {
+        //   var sql = `INSERT INTO employee (first_name, last_name, role_id) VALUES ('${answer.first_name}, ${answer.last_name}, ${answer.role_id})`;
+        // } else {
+          //}
+          connection.connect(function(err) {
+            if (err) throw err;
+            var sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}, ${answer.last_name}, ${answer.role_id}, ${answer.manager}')`;
+          console.log(sql)
+          connection.query(sql, function (err, result) {
+            if (err) throw err;
+            console.log("1 record inserted");
+            setTimeout(() => initApp(), 2000);
+            });
+          });
         });
-      });
-})
-})
+      })
+  })
 }
 
 // Read ---------------------------------
