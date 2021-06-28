@@ -12,7 +12,7 @@ A command line interface to view and manage the departments, roles, and employee
 To use this locally, this app requires Node.js to install and use. The package.json is already provided, so navigate to the project folder and run `npm install`. Use the `.sql` files to create the database and seed data, if needed.
 
 ## Usage
-If using locally, run `npm run start` after install. Answer the questions as needed! Except, I could not get them all to work! Yay. :')
+If using locally, run `npm run start` after install. Answer the questions as needed! More to come in the future. Check out my demo video [here](https://youtu.be/5cu20DqeKTI).
 
 ## License
 This project is licensed under the MIT license.
